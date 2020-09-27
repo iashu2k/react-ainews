@@ -2,19 +2,35 @@ import React, { useEffect, useState } from "react";
 import NewsCards from "./components/NewsCards";
 import alanBtn from "@alan-ai/alan-sdk-web";
 import AiNews from "./AiNews.png";
+import wordsToNumbers from 'words-to-numbers';
 
 const alanKey = process.env.REACT_APP_KEY;
 
 function App() {
-  const [articles, SetArticles] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [activeArticle, setActiveArticle] = useState(-1); 
 
   useEffect(() => {
     alanBtn({
       key: `${alanKey}`,
-      onCommand: ({ command, articles }) => {
+      onCommand: ({ command, articles, number }) => {
         if (command === "headlines") {
-          SetArticles(articles);
-          
+          setArticles(articles);    
+          setActiveArticle(-1);      
+        }else if (command=== "highlight"){
+          setActiveArticle((prevActiveArticle)=> prevActiveArticle+1);
+        }else if(command === 'open'){
+          const parsedNumber = number.length > 2 ? wordsToNumbers(number, {fuzzy: true}) : number;
+          const article = articles[parsedNumber-1];
+
+          if(parsedNumber > 20){
+            alanBtn().playText('Please try again.')
+          }else{
+            window.open(article.url, '_blank');
+            alanBtn().playText('Opening.')
+            
+          }
+
         }
       },
     });
@@ -28,7 +44,7 @@ function App() {
           src={AiNews}
           alt="logo"
         />
-         <NewsCards articles={articles} />
+         <NewsCards articles={articles} activeArticle={activeArticle} />
       </div>
 
      

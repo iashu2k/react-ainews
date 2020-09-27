@@ -1,15 +1,32 @@
-import React from "react";
+import React, {useState, useEffect, createRef} from "react";
 
-const NewsCard = ({ article, index }) => {
+const NewsCard = ({ article, index, activeArticle }) => {
   const date = new Date(article.publishedAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     weekday: "short",
     year: "numeric",
   });
+  let cardStyle = "flex flex-col justify-between bg-white h-full rounded-lg mx-2"; 
+  if(activeArticle===index){
+    cardStyle= `${cardStyle} border-b-4 border-blue-500`
+  }
+
+  const [elRefs, setElRefs] = useState([]);
+  const scrollToRef = ref => window.scroll(0, ref.current.offsetTop - 50);
+
+  useEffect(()=>{
+    setElRefs(refs => Array(20).fill().map((_, j) => refs[j] || createRef()));
+  }, []);
+
+  useEffect(()=>{
+    if(index===activeArticle && elRefs[activeArticle]){
+      scrollToRef(elRefs[activeArticle]);
+    }
+  }, [index, activeArticle, elRefs]);
 
   return (
-    <div className="flex flex-col justify-between  border-gray-400 bg-white h-full rounded-lg">
+    <div ref={elRefs[index]} className={cardStyle}>
       <div>
         <div
           className="h-56 bg-cover overflow-hidden rounded-t-lg"
