@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createRef} from "react";
+import React, { useState, useEffect, createRef } from "react";
 
 const NewsCard = ({ article, index, activeArticle }) => {
   const date = new Date(article.publishedAt).toLocaleDateString("en-US", {
@@ -7,20 +7,25 @@ const NewsCard = ({ article, index, activeArticle }) => {
     weekday: "short",
     year: "numeric",
   });
-  let cardStyle = "flex flex-col justify-between bg-white h-full rounded-lg mx-2"; 
-  if(activeArticle===index){
-    cardStyle= `${cardStyle} border-b-4 border-blue-500`
+  let cardStyle =
+    "flex flex-col justify-between bg-white h-full rounded-lg mx-2";
+  if (activeArticle === index) {
+    cardStyle = `${cardStyle} border-b-4 border-blue-500`;
   }
 
   const [elRefs, setElRefs] = useState([]);
-  const scrollToRef = ref => window.scroll(0, ref.current.offsetTop - 50);
+  const scrollToRef = (ref) => window.scroll(0, ref.current.offsetTop - 50);
 
-  useEffect(()=>{
-    setElRefs(refs => Array(20).fill().map((_, j) => refs[j] || createRef()));
+  useEffect(() => {
+    setElRefs((refs) =>
+      Array(20)
+        .fill()
+        .map((_, j) => refs[j] || createRef())
+    );
   }, []);
 
-  useEffect(()=>{
-    if(index===activeArticle && elRefs[activeArticle]){
+  useEffect(() => {
+    if (index === activeArticle && elRefs[activeArticle]) {
       scrollToRef(elRefs[activeArticle]);
     }
   }, [index, activeArticle, elRefs]);
